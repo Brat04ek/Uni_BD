@@ -1,9 +1,8 @@
 import enum
 from datetime import date
-from typing import Optional
 
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Float, Enum, Date
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import Integer, String, Float, Enum, Date, ForeignKey
 
 # Базовий клас
 class Base(DeclarativeBase):
@@ -39,6 +38,16 @@ class WeatherRecord(Base):
     wind_direction: Mapped[WindDirectionEnum] = mapped_column(Enum(WindDirectionEnum))
     last_updated: Mapped[date] = mapped_column(Date)
 
+    air_quality: Mapped["AirQuality"] = relationship(
+        back_populates="weather", cascade="all, delete-orphan"
+    )
+
+class AirQuality(Base):
+    __tablename__ = "air_quality"
+    
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("weather_record.id"))
+
     air_quality_Carbon_Monoxide : Mapped[float] = mapped_column(Float)
     air_quality_Ozone : Mapped[float] = mapped_column(Float)
     air_quality_Nitrogen_dioxide : Mapped[float] = mapped_column(Float)
@@ -47,3 +56,5 @@ class WeatherRecord(Base):
     air_quality_PM10 : Mapped[float] = mapped_column(Float)
     air_quality_us_epa_index : Mapped[int] = mapped_column(Integer)
     air_quality_gb_defra_index : Mapped[int] = mapped_column(Integer)
+
+    weather : Mapped["WeatherRecord"] = relationship(back_populates="air_quality")

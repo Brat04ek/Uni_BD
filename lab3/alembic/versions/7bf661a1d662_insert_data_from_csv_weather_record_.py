@@ -24,35 +24,43 @@ from datetime import datetime
 import csv
 
 def upgrade():
-    bind = op.get_bind()
-    session = Session(bind=bind)
-
-    path = r'C:\Users\Danylo\Documents\University\bd\lab3\GlobalWeatherRepository.csv'
-    with open(path, newline='', encoding='utf-8') as csvfile:
+    conn = op.get_bind()
+    csv_path = r'C:\Users\Danylo\Documents\University\bd\lab3\GlobalWeatherRepository.csv'
+    with open(csv_path, 'r', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
-        records = []
-
         for row in reader:
-            record = WeatherRecord(
-                country=row["country"],
-                wind_degree=int(row["wind_degree"]),
-                wind_kph=float(row["wind_kph"]),
-                wind_direction=WindDirectionEnum[row["wind_direction"]],
-                last_updated=datetime.strptime(row["last_updated"], "%Y-%m-%d %H:%M").date(),
-
-                air_quality_Carbon_Monoxide=float(row["air_quality_Carbon_Monoxide"]),
-                air_quality_Ozone=float(row["air_quality_Ozone"]),
-                air_quality_Nitrogen_dioxide=float(row["air_quality_Nitrogen_dioxide"]),
-                air_quality_Sulphur_dioxide=float(row["air_quality_Sulphur_dioxide"]),
-                air_quality_PM2=float(row["air_quality_PM2.5"]),
-                air_quality_PM10=float(row["air_quality_PM10"]),
-                air_quality_us_epa_index=int(row["air_quality_us-epa-index"]),
-                air_quality_gb_defra_index=int(row["air_quality_gb-defra-index"]),
+            wind_dir = row['wind_direction']
+            conn.execute(
+                sa.text("""
+                    INSERT INTO weather_record (
+                        country, wind_degree, wind_kph, wind_direction,
+                        last_updated, "air_quality_Carbon_Monoxide",
+                        "air_quality_Ozone", "air_quality_Nitrogen_dioxide",
+                        "air_quality_Sulphur_dioxide", "air_quality_PM2",
+                        "air_quality_PM10", air_quality_us_epa_index,
+                        air_quality_gb_defra_index
+                    ) VALUES (
+                        :country, :wind_degree, :wind_kph, :wind_direction,
+                        :last_updated, :co, :ozone, :no2,
+                        :so2, :pm2, :pm10, :epa, :gb
+                    )
+                """),
+                {
+                    'country': row['country'],
+                    'wind_degree': int(row['wind_degree']),
+                    'wind_kph': float(row['wind_kph']),
+                    'wind_direction': wind_dir,
+                    'last_updated': datetime.strptime(row['last_updated'], '%Y-%m-%d %H:%M').date(),
+                    'co': float(row['air_quality_Carbon_Monoxide']),
+                    'ozone': float(row['air_quality_Ozone']),
+                    'no2': float(row['air_quality_Nitrogen_dioxide']),
+                    'so2': float(row['air_quality_Sulphur_dioxide']),
+                    'pm2': float(row['air_quality_PM2.5']),
+                    'pm10': float(row['air_quality_PM10']),
+                    'epa': int(row['air_quality_us-epa-index']),
+                    'gb': int(row['air_quality_gb-defra-index'])
+                }
             )
-            records.append(record)
-
-        session.add_all(records)
-        session.commit()
 
 
 def downgrade() -> None:
