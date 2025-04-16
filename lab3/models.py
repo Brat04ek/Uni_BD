@@ -2,7 +2,7 @@ import enum
 from datetime import date
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Float, Enum, Date, ForeignKey
+from sqlalchemy import Integer, String, Float, Enum, Date, ForeignKey, Boolean
 
 # Базовий клас
 class Base(DeclarativeBase):
@@ -45,8 +45,7 @@ class WeatherRecord(Base):
 class AirQuality(Base):
     __tablename__ = "air_quality"
     
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("weather_record.id"))
+    id: Mapped[int] = mapped_column(ForeignKey("weather_record.id"), primary_key=True)
 
     air_quality_Carbon_Monoxide : Mapped[float] = mapped_column(Float)
     air_quality_Ozone : Mapped[float] = mapped_column(Float)
@@ -56,5 +55,7 @@ class AirQuality(Base):
     air_quality_PM10 : Mapped[float] = mapped_column(Float)
     air_quality_us_epa_index : Mapped[int] = mapped_column(Integer)
     air_quality_gb_defra_index : Mapped[int] = mapped_column(Integer)
+
+    worth_go_outside: Mapped[bool] = mapped_column(Boolean,  nullable=False, server_default="False")
 
     weather : Mapped["WeatherRecord"] = relationship(back_populates="air_quality")
