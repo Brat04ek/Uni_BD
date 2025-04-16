@@ -32,7 +32,7 @@ class WeatherRecord(Base):
     __tablename__ = "weather_record"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    country: Mapped[str] = mapped_column(String)
+    country: Mapped[str] = mapped_column(String(50))
     wind_degree: Mapped[int] = mapped_column(Integer)
     wind_kph: Mapped[float] = mapped_column(Float)
     wind_direction: Mapped[WindDirectionEnum] = mapped_column(Enum(WindDirectionEnum))
@@ -47,12 +47,12 @@ class AirQuality(Base):
     
     id: Mapped[int] = mapped_column(ForeignKey("weather_record.id"), primary_key=True)
 
-    air_quality_Carbon_Monoxide : Mapped[float] = mapped_column(Float)
-    air_quality_Ozone : Mapped[float] = mapped_column(Float)
-    air_quality_Nitrogen_dioxide : Mapped[float] = mapped_column(Float)
-    air_quality_Sulphur_dioxide : Mapped[float] = mapped_column(Float)
-    air_quality_PM2 : Mapped[float] = mapped_column(Float)
-    air_quality_PM10 : Mapped[float] = mapped_column(Float)
+    air_quality_carbon_monoxide : Mapped[float] = mapped_column(Float)
+    air_quality_ozone : Mapped[float] = mapped_column(Float)
+    air_quality_nitrogen_dioxide : Mapped[float] = mapped_column(Float)
+    air_quality_sulphur_dioxide : Mapped[float] = mapped_column(Float)
+    air_quality_pm2 : Mapped[float] = mapped_column(Float)
+    air_quality_pm10 : Mapped[float] = mapped_column(Float)
     air_quality_us_epa_index : Mapped[int] = mapped_column(Integer)
     air_quality_gb_defra_index : Mapped[int] = mapped_column(Integer)
 

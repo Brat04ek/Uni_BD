@@ -34,10 +34,10 @@ def upgrade():
                 sa.text("""
                     INSERT INTO weather_record (
                         country, wind_degree, wind_kph, wind_direction,
-                        last_updated, "air_quality_Carbon_Monoxide",
-                        "air_quality_Ozone", "air_quality_Nitrogen_dioxide",
-                        "air_quality_Sulphur_dioxide", "air_quality_PM2",
-                        "air_quality_PM10", air_quality_us_epa_index,
+                        last_updated, air_quality_carbon_monoxide,
+                        air_quality_ozone, air_quality_nitrogen_dioxide,
+                        air_quality_sulphur_dioxide, air_quality_pm2,
+                        air_quality_pm10, air_quality_us_epa_index,
                         air_quality_gb_defra_index
                     ) VALUES (
                         :country, :wind_degree, :wind_kph, :wind_direction,
